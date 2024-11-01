@@ -1,9 +1,23 @@
-### GET request to example server
-POST http://localhost:8080/account
+
+### Create new user account
+POST http://localhost:8080/user-account
+Content-Type: application/json
 
 {
-"name" : "John"
+  "firstName": "John",
+  "lastName": "Doe",
+  "initialBalance" : 10.00
 }
 
-### GET request to example server
-GET http://localhost:8080/user-account/12345
+### Get user account details
+GET http://localhost:8080/user-account/1
+
+
+### Create new bank account
+POST http://localhost:8080/user-account/1/bank-account
+Content-Type: application/json
+
+{
+  "balance": 20,
+  "currency": "USD"
+}
