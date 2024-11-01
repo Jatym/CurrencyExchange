@@ -1,0 +1,9 @@
+### GET request to example server
+POST http://localhost:8080/account
+
+{
+"name" : "John"
+}
+
+### GET request to example server
+GET http://localhost:8080/user-account/12345
