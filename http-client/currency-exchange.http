@@ -21,3 +21,21 @@ Content-Type: application/json
   "balance": 20,
   "currency": "USD"
 }
+
+
+### Get bank account
+GET http://localhost:8080/user-account/1/bank-account/2
+
+
+### Create new operation
+POST http://localhost:8080/user-account/1/operation
+Content-Type: application/json
+
+{
+  "currency": "USD",
+  "action": "BUY",
+  "value": 10.50
+}
+
+### Get operations list for bank account
+GET http://localhost:8080/user-account/1/bank-account/1/operation

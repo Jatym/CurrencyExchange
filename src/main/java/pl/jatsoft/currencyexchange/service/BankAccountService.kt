@@ -1,5 +1,6 @@
 package pl.jatsoft.currencyexchange.service
 
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import pl.jatsoft.currencyexchange.domain.BankAccountDomain
 import pl.jatsoft.currencyexchange.domain.UserAccountDomain
@@ -14,14 +15,17 @@ class BankAccountService(
     val bankAccountRepository: BankAccountRepository
 ) {
 
-    fun addNewAccount(bankAccount: BankAccountDomain, userAccountId: Long) : BankAccountDomain {
+    @Transactional
+    fun addNewAccount(bankAccount: BankAccountDomain, userAccountId: Long) : UserAccountDomain {
         val userAccountEntity = userAccountRepository.findById(userAccountId).get()
-        return bankAccountRepository.save(bankAccount.toEntity(userAccountEntity)).toDomain()
+        userAccountEntity.bankAccounts?.add(bankAccount.toEntity())
+        return userAccountRepository.save(userAccountEntity).toDomain()
     }
 
+    @Transactional
     fun getDetails(userAccountId: Long, bankAccountId: Long): BankAccountDomain {
         val userAccountEntity = userAccountRepository.findById(userAccountId).get()
-        //verify if belongs to user
+        //TODO verify if belongs to user
         return bankAccountRepository.findById(bankAccountId).get().toDomain()
     }
 }

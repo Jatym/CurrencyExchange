@@ -1,6 +1,6 @@
 package pl.jatsoft.currencyexchange.api
 
-import pl.jatsoft.currencyexchange.entity.Currency
+import java.time.LocalDateTime
 
 
 data class NewUserAccountDto(
@@ -18,16 +18,32 @@ data class UserAccountDto(
 
 data class BankAccountDto(
     val id: Long?,
-    var balance: Double,
-    var currency: Currency,
+    val balance: Double,
+    val currency: CurrencyDto,
+)
+
+data class NewExchangeDto(
+    val value: Double,
+    val currency: CurrencyDto,
+    val action: ActionDto
 )
 
 data class OperationDto(
-    var inputBankAccount: BankAccountDto,
-    var outputBankAccount: BankAccountDto,
-    var inputValue: Double,
-    var outputValue: Double,
-    var exchangeRate: Double,
+    val id: Long?,
+    val createTime: LocalDateTime,
+    val inputBankAccount: BankAccountDto,
+    val outputBankAccount: BankAccountDto,
+    val inputValue: Double,
+    val outputValue: Double,
+    val exchangeRate: Double
 )
+
+enum class ActionDto {
+    BUY, SELL
+}
+
+enum class CurrencyDto {
+    PLN, USD
+}
 
 

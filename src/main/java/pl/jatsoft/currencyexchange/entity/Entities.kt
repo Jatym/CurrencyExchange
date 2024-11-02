@@ -12,8 +12,9 @@ data class UserAccountEntity(
     val createTime: LocalDateTime = LocalDateTime.now(),
     val firstName: String,
     val lastName: String,
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "userAccount", fetch = FetchType.EAGER)
-    val bankAccounts: List<BankAccountEntity>? = listOf()
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    val bankAccounts: MutableList<BankAccountEntity>? = null
 )
 
 @Entity
@@ -25,9 +26,6 @@ data class BankAccountEntity(
     val initialBalance: Double,
     @Enumerated(EnumType.STRING)
     val currency: Currency,
-    @ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name="user_account_id", nullable=false)
-    val userAccount: UserAccountEntity
 )
 
 @Entity
@@ -44,7 +42,7 @@ data class OperationEntity(
     val outputBankAccount: BankAccountEntity,
     val inputValue: Double,
     val outputValue: Double,
-    val exchangeRate: Double = 2.0,
+    val exchangeRate: Double
 )
 
 

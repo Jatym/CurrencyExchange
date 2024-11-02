@@ -21,9 +21,19 @@ data class BankAccountDomain(
 data class OperationDomain(
     val id: Long? = null,
     val createTime: LocalDateTime = LocalDateTime.now(),
-    val inBankAccount: BankAccountDomain,
-    val outBankAccount: BankAccountDomain,
+    val inputBankAccount: BankAccountDomain,
+    val outputBankAccount: BankAccountDomain,
     val inputValue: Double,
-    val outValue: Double,
+    val outputValue: Double,
     val exchangeRate: Double
 )
+
+data class NewExchangeDomain(
+    val value: Double,
+    val currency: Currency,
+    val action: Action
+)
+
+enum class Action {
+    BUY, SELL
+}

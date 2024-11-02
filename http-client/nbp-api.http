@@ -1,0 +1,9 @@
+
+### Get rates for USD
+GET https://api.nbp.pl/api/exchangerates/rates/c/usd/today/
+Accept: application/json
+
+
+### Get rates for USD
+GET https://api.nbp.pl/api/exchangerates/rates/c/usd/2024-10-30/
+Accept: application/json
