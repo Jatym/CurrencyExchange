@@ -14,7 +14,7 @@ data class UserAccountDomain(
 data class BankAccountDomain(
     val id: Long? = null,
     val createTime: LocalDateTime = LocalDateTime.now(),
-    val balance: Double,
+    val initialBalance: Double,
     val currency: Currency
 )
 

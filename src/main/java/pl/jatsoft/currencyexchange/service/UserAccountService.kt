@@ -15,11 +15,11 @@ class UserAccountService(
     @Transactional
     fun addNewAccount(userAccount: UserAccountDomain) : UserAccountDomain {
         val userAccountEntity = userAccountRepository.save(userAccount.toEntity())
-        return userAccountRepository.findById(userAccountEntity.id!!).get().toDomain()
+        return userAccountRepository.findUserAccountById(userAccountEntity.id!!).toDomain()
     }
 
     @Transactional
     fun getDetails(accountId: Long): UserAccountDomain {
-        return userAccountRepository.findById(accountId).get().toDomain()
+        return userAccountRepository.findUserAccountById(accountId).toDomain()
     }
 }

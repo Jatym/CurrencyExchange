@@ -13,7 +13,7 @@ fun NewUserAccountDto.toDomain(): UserAccountDomain {
         lastName = this.lastName,
         bankAccounts = listOf(
             BankAccountDomain(
-                balance = this.initialBalance,
+                initialBalance = this.initialBalance,
                 currency = Currency.PLN
             )
         )
@@ -49,17 +49,16 @@ fun UserAccountDomain.toDto(): UserAccountDto {
 
 fun BankAccountDomain.toEntity(): BankAccountEntity {
     return BankAccountEntity(
-        initialBalance = this.balance,
+        initialBalance = this.initialBalance,
         currency = this.currency,
-        createTime = this.createTime,
-        //userAccount = userAccountEntity
+        createTime = this.createTime
     )
 }
 
 fun BankAccountDto.toDomain(): BankAccountDomain {
     return BankAccountDomain(
         id = this.id,
-        balance = this.balance,
+        initialBalance = this.initialBalance,
         currency = this.currency.toDomain()
     )
 }
@@ -68,7 +67,7 @@ fun BankAccountEntity.toDomain(): BankAccountDomain {
     return BankAccountDomain(
         id = this.id,
         createTime = this.createTime,
-        balance = this.initialBalance,
+        initialBalance = this.initialBalance,
         currency = this.currency
     )
 }
@@ -76,7 +75,7 @@ fun BankAccountEntity.toDomain(): BankAccountDomain {
 fun BankAccountDomain.toDto(): BankAccountDto {
     return BankAccountDto(
         id = this.id,
-        balance = this.balance,
+        initialBalance = this.initialBalance,
         currency = this.currency.toDto()
     )
 }

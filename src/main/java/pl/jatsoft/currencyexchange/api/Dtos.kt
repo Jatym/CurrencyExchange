@@ -18,7 +18,7 @@ data class UserAccountDto(
 
 data class BankAccountDto(
     val id: Long?,
-    val balance: Double,
+    val initialBalance: Double,
     val currency: CurrencyDto,
 )
 

@@ -23,7 +23,12 @@ class BankAccountController(
     }
 
     @GetMapping("/{userAccountId}/bank-account/{bankAccountId}", produces = ["application/json"])
-    fun accountDetails(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): BankAccountDto {
+    fun getAccountDetails(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): BankAccountDto {
         return bankAccountService.getDetails(userAccountId, bankAccountId).toDto()
+    }
+
+    @GetMapping("/{userAccountId}/bank-account/{bankAccountId}/balance", produces = ["application/json"])
+    fun getBalance(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): Double {
+        return bankAccountService.getBalance(bankAccountId)
     }
 }
