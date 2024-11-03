@@ -12,6 +12,9 @@ import pl.jatsoft.currencyexchange.entity.Currency
 import pl.jatsoft.currencyexchange.entity.OperationEntity
 import pl.jatsoft.currencyexchange.entity.UserAccountEntity
 import pl.jatsoft.currencyexchange.infrastructure.BankAccountNotFoundException
+import pl.jatsoft.currencyexchange.infrastructure.BankAccountNotFoundException.Companion.bResponse
+import pl.jatsoft.currencyexchange.infrastructure.UserAccountNotFoundException
+import pl.jatsoft.currencyexchange.infrastructure.UserAccountNotFoundException.Companion.uResponse
 import pl.jatsoft.currencyexchange.infrastructure.toDomain
 import pl.jatsoft.currencyexchange.infrastructure.toDomainList
 import pl.jatsoft.currencyexchange.repository.OperationRepository
@@ -28,8 +31,9 @@ class OperationService(
 
     @Transactional
     fun addNewOperation(newExchangeDomain: NewExchangeDomain, userAccountId: Long): OperationDomain {
-        val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
-        operationValidatorService.validate(newExchangeDomain, userAccountEntity)
+        val userAccountEntity = userAccountRepository.findById(userAccountId)
+            .orElseThrow { UserAccountNotFoundException(errorResponse = uResponse) }
+        operationValidatorService.validate(newExchangeDomain, userAccountEntity!!)
         return operationRepository.save(createNewOperation(newExchangeDomain, userAccountEntity)).toDomain()
     }
 
@@ -37,7 +41,8 @@ class OperationService(
         newExchangeDomain: NewExchangeDomain,
         userAccount: UserAccountEntity
     ): OperationEntity {
-        val exchangeRates = nbpClient.exchangeRates(newExchangeDomain.currency)?.rates?.first() ?: throw RuntimeException("Can't retrive exchange rates")
+        val exchangeRates = nbpClient.exchangeRates(newExchangeDomain.currency)?.rates?.first()
+            ?: throw RuntimeException("Can't retrive exchange rates")
         val rate = retriveRate(exchangeRates, newExchangeDomain.action)
         return OperationEntity(
             inputBankAccount = findInputBankAccount(newExchangeDomain, userAccount),
@@ -51,8 +56,7 @@ class OperationService(
     private fun retriveRate(exchangeRates: RatesDto, action: Action): Double {
         return if (action == Action.BUY) {
             exchangeRates.ask
-        }
-        else {
+        } else {
             exchangeRates.bid
         }
     }
@@ -63,14 +67,12 @@ class OperationService(
     ): BankAccountEntity {
         return if (newExchangeDomain.action == Action.BUY) {
             userAccount.bankAccounts?.find { it.currency == Currency.PLN } ?: throw BankAccountNotFoundException(
-                "Not found PLN bank account",
-                BankAccountNotFoundException.response
+                errorResponse = bResponse
             )
         } else {
             userAccount.bankAccounts?.find { it.currency == newExchangeDomain.currency }
                 ?: throw BankAccountNotFoundException(
-                    "Not found ${newExchangeDomain.currency.name} bank account",
-                    BankAccountNotFoundException.response
+                    errorResponse = bResponse
                 )
         }
     }
@@ -81,14 +83,12 @@ class OperationService(
     ): BankAccountEntity {
         return if (newExchangeDomain.action == Action.SELL) {
             userAccount.bankAccounts?.find { it.currency == Currency.PLN } ?: throw BankAccountNotFoundException(
-                "Not found PLN bank account",
-                BankAccountNotFoundException.response
+                errorResponse = bResponse
             )
         } else {
             userAccount.bankAccounts?.find { it.currency == newExchangeDomain.currency }
                 ?: throw BankAccountNotFoundException(
-                    "Not found ${newExchangeDomain.currency.name} bank account",
-                    BankAccountNotFoundException.response
+                    errorResponse = bResponse
                 )
         }
     }
@@ -98,8 +98,7 @@ class OperationService(
         val userAccountEntity = userAccountRepository.findById(userAccountId).get()
         val bankAccountEntity = userAccountEntity.bankAccounts?.find { it.id == bankAccountId }
             ?: throw BankAccountNotFoundException(
-                "Bank account with id $bankAccountId does not exist",
-                BankAccountNotFoundException.response
+                errorResponse = bResponse
             )
         val inputOperations = operationRepository.findAllByInputBankAccount(bankAccountEntity)
         val outputOperations = operationRepository.findAllByOutputBankAccount(bankAccountEntity)

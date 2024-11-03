@@ -1,5 +1,7 @@
 package pl.jatsoft.currencyexchange.service
 
+import java.time.LocalDateTime
+import java.util.Optional
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -12,7 +14,6 @@ import pl.jatsoft.currencyexchange.repository.BankAccountRepository
 import pl.jatsoft.currencyexchange.repository.OperationRepository
 import pl.jatsoft.currencyexchange.repository.UserAccountRepository
 import pl.jatsoft.currencyexchange.validation.BankAccountValidatorService
-import java.time.LocalDateTime
 
 
 class BankAccountServiceTest {
@@ -30,7 +31,7 @@ class BankAccountServiceTest {
     @Test
     fun getBalance() {
 
-        whenever(bankAccountRepository.findBankAccountById(plnBankAccountId)).thenReturn(fillBankAccountPLN())
+        whenever(bankAccountRepository.findById(plnBankAccountId)).thenReturn(Optional.of(fillBankAccountPLN()))
         whenever(operationRepository.findAllByInputBankAccount(any())).thenReturn(fillInputOperations())
         whenever(operationRepository.findAllByOutputBankAccount(any())).thenReturn(fillOutputOperations())
 

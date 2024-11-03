@@ -14,7 +14,7 @@ GET http://localhost:8080/user-account/2
 
 
 ### Create new bank account
-POST http://localhost:8080/user-account/2/bank-account
+POST http://localhost:8080/user-account/1/bank-account
 Content-Type: application/json
 
 {

@@ -8,6 +8,10 @@ import pl.jatsoft.currencyexchange.domain.UserAccountDomain
 import pl.jatsoft.currencyexchange.entity.BankAccountEntity
 import pl.jatsoft.currencyexchange.entity.Currency
 import pl.jatsoft.currencyexchange.entity.OperationEntity
+import pl.jatsoft.currencyexchange.infrastructure.BankAccountNotFoundException
+import pl.jatsoft.currencyexchange.infrastructure.BankAccountNotFoundException.Companion.bResponse
+import pl.jatsoft.currencyexchange.infrastructure.UserAccountNotFoundException
+import pl.jatsoft.currencyexchange.infrastructure.UserAccountNotFoundException.Companion.uResponse
 import pl.jatsoft.currencyexchange.infrastructure.toDomain
 import pl.jatsoft.currencyexchange.infrastructure.toEntity
 import pl.jatsoft.currencyexchange.repository.BankAccountRepository
@@ -25,22 +29,26 @@ class BankAccountService(
 
     @Transactional
     fun addNewAccount(bankAccount: BankAccountDomain, userAccountId: Long): UserAccountDomain {
-        val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
-        userAccountEntity.bankAccounts?.add(bankAccount.toEntity())
+        val userAccountEntity = userAccountRepository.findById(userAccountId)
+            .orElseThrow { UserAccountNotFoundException(errorResponse = uResponse) }
+        userAccountEntity!!.bankAccounts?.add(bankAccount.toEntity())
         return userAccountRepository.save(userAccountEntity).toDomain()
     }
 
     @Transactional
     fun getDetails(userAccountId: Long, bankAccountId: Long): BankAccountDomain {
-        val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
-        val bankAccountEntity = bankAccountRepository.findBankAccountById(bankAccountId)
+        val userAccountEntity = userAccountRepository.findById(userAccountId)
+            .orElseThrow { UserAccountNotFoundException(errorResponse = uResponse) }
+        val bankAccountEntity = bankAccountRepository.findById(bankAccountId)
+            .orElseThrow { BankAccountNotFoundException(errorResponse = bResponse) }
         bankAccountValidatorService.validate(bankAccountEntity, userAccountEntity)
         return bankAccountEntity.toDomain()
     }
 
     @Transactional
     fun getBalance(bankAccountId: Long): BalanceDomain {
-        val bankAccount = bankAccountRepository.findBankAccountById(bankAccountId)
+        val bankAccount = bankAccountRepository.findById(bankAccountId)
+            .orElseThrow { BankAccountNotFoundException(errorResponse = bResponse) }
         val inputOperations = operationRepository.findAllByInputBankAccount(bankAccount)
         val outputOperations = operationRepository.findAllByOutputBankAccount(bankAccount)
         val inputSum = calculateInputOperations(inputOperations, bankAccount.currency)
@@ -58,8 +66,7 @@ class BankAccountService(
                 bankAccount.initialBalance + outputSum - inputSum,
                 bankAccount.currency
             )
-        }
-        else {
+        } else {
             BalanceDomain(
                 bankAccount.initialBalance - inputSum + outputSum,
                 bankAccount.currency
@@ -75,7 +82,7 @@ class BankAccountService(
         }
     }
 
-    private fun calculateOutputOperations(outputOperations: List<OperationEntity>, currency: Currency) : Double {
+    private fun calculateOutputOperations(outputOperations: List<OperationEntity>, currency: Currency): Double {
         return if (currency == Currency.PLN) {
             outputOperations.sumOf { it.outputValue }
         } else {
