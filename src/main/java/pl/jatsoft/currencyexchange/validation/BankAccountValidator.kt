@@ -10,7 +10,7 @@ import pl.jatsoft.currencyexchange.infrastructure.ValidationException
 class BankAccountValidatorService(
     private val bankAccountValidators: List<BankAccountValidator>
 ) {
-    fun valdate(bankAccountEntity: BankAccountEntity?, userAccountEntity: UserAccountEntity?) {
+    fun validate(bankAccountEntity: BankAccountEntity?, userAccountEntity: UserAccountEntity?) {
         val errors: MutableList<String?> = mutableListOf()
         bankAccountValidators.forEach {
             validator ->

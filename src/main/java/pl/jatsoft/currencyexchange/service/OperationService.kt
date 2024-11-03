@@ -16,17 +16,20 @@ import pl.jatsoft.currencyexchange.infrastructure.toDomain
 import pl.jatsoft.currencyexchange.infrastructure.toDomainList
 import pl.jatsoft.currencyexchange.repository.OperationRepository
 import pl.jatsoft.currencyexchange.repository.UserAccountRepository
+import pl.jatsoft.currencyexchange.validation.OperationValidatorService
 
 @Service
 class OperationService(
     val userAccountRepository: UserAccountRepository,
     val operationRepository: OperationRepository,
-    val nbpClient: NbpClient
+    val nbpClient: NbpClient,
+    val operationValidatorService: OperationValidatorService
 ) {
 
     @Transactional
     fun addNewOperation(newExchangeDomain: NewExchangeDomain, userAccountId: Long): OperationDomain {
         val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
+        operationValidatorService.validate(newExchangeDomain, userAccountEntity)
         return operationRepository.save(createNewOperation(newExchangeDomain, userAccountEntity)).toDomain()
     }
 

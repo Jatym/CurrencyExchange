@@ -34,7 +34,7 @@ class BankAccountService(
     fun getDetails(userAccountId: Long, bankAccountId: Long): BankAccountDomain {
         val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
         val bankAccountEntity = bankAccountRepository.findBankAccountById(bankAccountId)
-        bankAccountValidatorService.valdate(bankAccountEntity, userAccountEntity)
+        bankAccountValidatorService.validate(bankAccountEntity, userAccountEntity)
         return bankAccountEntity.toDomain()
     }
 

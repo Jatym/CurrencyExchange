@@ -1,7 +1,19 @@
 package pl.jatsoft.currencyexchange.infrastructure
 
-import pl.jatsoft.currencyexchange.api.*
-import pl.jatsoft.currencyexchange.domain.*
+import pl.jatsoft.currencyexchange.api.ActionDto
+import pl.jatsoft.currencyexchange.api.BalanceDto
+import pl.jatsoft.currencyexchange.api.BankAccountDto
+import pl.jatsoft.currencyexchange.api.CurrencyDto
+import pl.jatsoft.currencyexchange.api.NewExchangeDto
+import pl.jatsoft.currencyexchange.api.NewUserAccountDto
+import pl.jatsoft.currencyexchange.api.OperationDto
+import pl.jatsoft.currencyexchange.api.UserAccountDto
+import pl.jatsoft.currencyexchange.domain.Action
+import pl.jatsoft.currencyexchange.domain.BalanceDomain
+import pl.jatsoft.currencyexchange.domain.BankAccountDomain
+import pl.jatsoft.currencyexchange.domain.NewExchangeDomain
+import pl.jatsoft.currencyexchange.domain.OperationDomain
+import pl.jatsoft.currencyexchange.domain.UserAccountDomain
 import pl.jatsoft.currencyexchange.entity.BankAccountEntity
 import pl.jatsoft.currencyexchange.entity.Currency
 import pl.jatsoft.currencyexchange.entity.OperationEntity
@@ -124,5 +136,8 @@ fun List<OperationEntity>.toDomainList(): List<OperationDomain> = this.map { it.
 
 fun CurrencyDto.toDomain() = Currency.valueOf(this.name)
 fun Currency.toDto() = CurrencyDto.valueOf(this.name)
+
+private val ActionDto.action: Action
+    get() = Action.valueOf(this.name)
 
 fun ActionDto.toDomain() = Action.valueOf(this.name)
