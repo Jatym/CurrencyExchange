@@ -4,8 +4,8 @@ POST http://localhost:8080/user-account
 Content-Type: application/json
 
 {
-  "firstName": "John2",
-  "lastName": "Doe2",
+  "firstName": "John",
+  "lastName": "Doe",
   "initialBalance" : 10.00
 }
 
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ### Get bank account
-GET http://localhost:8080/user-account/1/bank-account/3
+GET http://localhost:8080/user-account/1/bank-account/1
 
 ### Get bank account
 GET http://localhost:8080/user-account/1/bank-account/1/balance
@@ -36,8 +36,8 @@ Content-Type: application/json
 
 {
   "currency": "USD",
-  "action": "BUY",
-  "value": 10
+  "action": "SELL",
+  "value": 5
 }
 
 ### Get operations list for bank account
