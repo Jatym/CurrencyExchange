@@ -1,6 +1,7 @@
 package pl.jatsoft.currencyexchange.api
 
-import org.springframework.validation.annotation.Validated
+import jakarta.validation.Valid
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pl.jatsoft.currencyexchange.infrastructure.toDomain
 import pl.jatsoft.currencyexchange.infrastructure.toDto
@@ -16,19 +17,20 @@ class BankAccountController(
         produces = ["application/json"],
         consumes = ["application/json"]
     )
-    fun createBankAccount(@RequestBody @Validated bankAccount: BankAccountDto,
+    fun createBankAccount(@Valid @RequestBody bankAccount: BankAccountDto,
                           @PathVariable userAccountId: Long
-    ) : UserAccountDto {
-        return bankAccountService.addNewAccount(bankAccount.toDomain(), userAccountId).toDto()
+    ) : ResponseEntity<UserAccountDto> {
+        return ResponseEntity.status(201)
+            .body(bankAccountService.addNewAccount(bankAccount.toDomain(), userAccountId).toDto())
     }
 
     @GetMapping("/{userAccountId}/bank-account/{bankAccountId}", produces = ["application/json"])
-    fun getAccountDetails(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): BankAccountDto {
-        return bankAccountService.getDetails(userAccountId, bankAccountId).toDto()
+    fun getAccountDetails(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): ResponseEntity<BankAccountDto> {
+        return ResponseEntity.ok(bankAccountService.getDetails(userAccountId, bankAccountId).toDto())
     }
 
     @GetMapping("/{userAccountId}/bank-account/{bankAccountId}/balance", produces = ["application/json"])
-    fun getBalance(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): BalanceDto {
-        return bankAccountService.getBalance(bankAccountId).toDto()
+    fun getBalance(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): ResponseEntity<BalanceDto> {
+        return ResponseEntity.ok(bankAccountService.getBalance(bankAccountId).toDto())
     }
 }

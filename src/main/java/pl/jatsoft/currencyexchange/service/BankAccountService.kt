@@ -13,12 +13,14 @@ import pl.jatsoft.currencyexchange.infrastructure.toEntity
 import pl.jatsoft.currencyexchange.repository.BankAccountRepository
 import pl.jatsoft.currencyexchange.repository.OperationRepository
 import pl.jatsoft.currencyexchange.repository.UserAccountRepository
+import pl.jatsoft.currencyexchange.validation.BankAccountValidatorService
 
 @Service
 class BankAccountService(
     val userAccountRepository: UserAccountRepository,
     val bankAccountRepository: BankAccountRepository,
-    val operationRepository: OperationRepository
+    val operationRepository: OperationRepository,
+    val bankAccountValidatorService: BankAccountValidatorService
 ) {
 
     @Transactional
@@ -31,8 +33,9 @@ class BankAccountService(
     @Transactional
     fun getDetails(userAccountId: Long, bankAccountId: Long): BankAccountDomain {
         val userAccountEntity = userAccountRepository.findUserAccountById(userAccountId)
-        //TODO verify if belongs to user
-        return bankAccountRepository.findBankAccountById(bankAccountId).toDomain()
+        val bankAccountEntity = bankAccountRepository.findBankAccountById(bankAccountId)
+        bankAccountValidatorService.valdate(bankAccountEntity, userAccountEntity)
+        return bankAccountEntity.toDomain()
     }
 
     @Transactional

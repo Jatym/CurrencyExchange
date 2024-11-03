@@ -11,6 +11,6 @@ class ExceptionHandler {
 
     @ExceptionHandler(BusinessException::class)
     fun handleConflict(e: BusinessException): ResponseEntity<String> {
-        return ResponseEntity.status(e.errorResponse.code).body(e.errorResponse.message)
+        return ResponseEntity.status(e.errorResponse.code).body(e.errorResponse.messages.joinToString("\n"))
     }
 }

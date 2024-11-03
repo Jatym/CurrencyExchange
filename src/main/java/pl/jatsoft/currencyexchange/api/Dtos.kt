@@ -1,11 +1,18 @@
 package pl.jatsoft.currencyexchange.api
 
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import java.time.LocalDateTime
 
 
 data class NewUserAccountDto(
+    @field:NotBlank
     val firstName: String,
+    @field:NotBlank
     val lastName: String,
+    @field:NotNull
+    @field:Min(10)
     val initialBalance: Double
 )
 

@@ -1,5 +1,6 @@
 package pl.jatsoft.currencyexchange.api
 
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import pl.jatsoft.currencyexchange.infrastructure.toDomain
@@ -19,12 +20,13 @@ class OperationController(
     )
     fun createBankAccount(@RequestBody @Validated newExchangeDto: NewExchangeDto,
                           @PathVariable userAccountId: Long
-    ) : OperationDto {
-        return operationService.addNewOperation(newExchangeDto.toDomain(), userAccountId).toDto()
+    ) : ResponseEntity<OperationDto> {
+        return ResponseEntity.status(201)
+            .body(operationService.addNewOperation(newExchangeDto.toDomain(), userAccountId).toDto())
     }
 
     @GetMapping("/{userAccountId}/bank-account/{bankAccountId}/operation", produces = ["application/json"])
-    fun getBankAccountOperationsList(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): List<OperationDto> {
-        return operationService.getOperationList(bankAccountId, userAccountId).toDtoList()
+    fun getBankAccountOperationsList(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): ResponseEntity<List<OperationDto>> {
+        return ResponseEntity.ok(operationService.getOperationList(bankAccountId, userAccountId).toDtoList())
     }
 }

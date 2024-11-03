@@ -6,16 +6,18 @@ open class BusinessException(override val message: String, open val errorRespons
 class BankAccountNotFoundException(override val message: String, override val errorResponse: ErrorResponse) : BusinessException(message, errorResponse) {
 
     companion object {
-        val response = ErrorResponse(404, "Bank account not found")
+        val response = ErrorResponse(404, listOf("Bank account not found"))
     }
 }
 
 class UserAccountNotFoundException(override val message: String, override val errorResponse: ErrorResponse) : BusinessException(message, errorResponse) {
 
     companion object {
-        val response = ErrorResponse(404, "User account not found")
+        val response = ErrorResponse(404, listOf("User account not found"))
     }
 }
 
+class ValidationException(override val message: String, override val errorResponse: ErrorResponse) : BusinessException(message, errorResponse)
 
-data class ErrorResponse(val code: Int, val message: String)
+
+data class ErrorResponse(val code: Int, val messages: List<String>)
