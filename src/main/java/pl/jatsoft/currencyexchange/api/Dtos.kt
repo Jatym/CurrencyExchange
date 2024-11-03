@@ -38,6 +38,11 @@ data class OperationDto(
     val exchangeRate: Double
 )
 
+data class BalanceDto(
+    val balance: Double,
+    val currency: CurrencyDto
+)
+
 enum class ActionDto {
     BUY, SELL
 }

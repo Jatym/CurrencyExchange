@@ -112,6 +112,13 @@ fun OperationDomain.toDto() : OperationDto {
     )
 }
 
+fun BalanceDomain.toDto(): BalanceDto {
+    return BalanceDto(
+        balance = this.balance,
+        currency = this.currency.toDto()
+    )
+}
+
 fun List<OperationDomain>.toDtoList(): List<OperationDto> = this.map { it.toDto() }
 fun List<OperationEntity>.toDomainList(): List<OperationDomain> = this.map { it.toDomain() }
 

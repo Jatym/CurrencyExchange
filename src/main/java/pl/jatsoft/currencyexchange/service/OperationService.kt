@@ -2,6 +2,8 @@ package pl.jatsoft.currencyexchange.service
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import pl.jatsoft.currencyexchange.adapter.NbpClient
+import pl.jatsoft.currencyexchange.adapter.RatesDto
 import pl.jatsoft.currencyexchange.domain.Action
 import pl.jatsoft.currencyexchange.domain.NewExchangeDomain
 import pl.jatsoft.currencyexchange.domain.OperationDomain
@@ -18,7 +20,8 @@ import pl.jatsoft.currencyexchange.repository.UserAccountRepository
 @Service
 class OperationService(
     val userAccountRepository: UserAccountRepository,
-    val operationRepository: OperationRepository
+    val operationRepository: OperationRepository,
+    val nbpClient: NbpClient
 ) {
 
     @Transactional
@@ -31,13 +34,24 @@ class OperationService(
         newExchangeDomain: NewExchangeDomain,
         userAccount: UserAccountEntity
     ): OperationEntity {
+        val exchangeRates = nbpClient.exchangeRates(newExchangeDomain.currency)?.rates?.first() ?: throw RuntimeException("Can't retrive exchange rates")
+        val rate = retriveRate(exchangeRates, newExchangeDomain.action)
         return OperationEntity(
             inputBankAccount = findInputBankAccount(newExchangeDomain, userAccount),
             outputBankAccount = findOutputBankAccount(newExchangeDomain, userAccount),
             inputValue = newExchangeDomain.value,
-            outputValue = newExchangeDomain.value * 0.4,
-            exchangeRate = 0.4
+            outputValue = newExchangeDomain.value * rate,
+            exchangeRate = rate
         )
+    }
+
+    private fun retriveRate(exchangeRates: RatesDto, action: Action): Double {
+        return if (action == Action.BUY) {
+            exchangeRates.ask
+        }
+        else {
+            exchangeRates.bid
+        }
     }
 
     private fun findInputBankAccount(

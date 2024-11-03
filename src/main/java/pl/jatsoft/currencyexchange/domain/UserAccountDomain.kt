@@ -34,6 +34,11 @@ data class NewExchangeDomain(
     val action: Action
 )
 
+data class BalanceDomain(
+    val balance: Double,
+    val currency: Currency
+)
+
 enum class Action {
     BUY, SELL
 }

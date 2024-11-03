@@ -6,3 +6,13 @@ spring:
         globally_quoted_identifiers_skip_column_definitions: true
     open-in-view: false
     show-sql: true
+
+logging:
+  level:
+    org:
+      apache:
+        hc:
+          client5:
+            http: DEBUG
+    httpclient:
+      wire: DEBUG

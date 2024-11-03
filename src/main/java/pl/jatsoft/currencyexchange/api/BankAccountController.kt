@@ -28,7 +28,7 @@ class BankAccountController(
     }
 
     @GetMapping("/{userAccountId}/bank-account/{bankAccountId}/balance", produces = ["application/json"])
-    fun getBalance(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): Double {
-        return bankAccountService.getBalance(bankAccountId)
+    fun getBalance(@PathVariable userAccountId: Long, @PathVariable bankAccountId: Long): BalanceDto {
+        return bankAccountService.getBalance(bankAccountId).toDto()
     }
 }

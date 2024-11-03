@@ -2,9 +2,11 @@ package pl.jatsoft.currencyexchange.service
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import pl.jatsoft.currencyexchange.domain.BalanceDomain
 import pl.jatsoft.currencyexchange.domain.BankAccountDomain
 import pl.jatsoft.currencyexchange.domain.UserAccountDomain
 import pl.jatsoft.currencyexchange.entity.BankAccountEntity
+import pl.jatsoft.currencyexchange.entity.Currency
 import pl.jatsoft.currencyexchange.entity.OperationEntity
 import pl.jatsoft.currencyexchange.infrastructure.toDomain
 import pl.jatsoft.currencyexchange.infrastructure.toEntity
@@ -34,24 +36,47 @@ class BankAccountService(
     }
 
     @Transactional
-    fun getBalance(bankAccountId: Long): Double {
+    fun getBalance(bankAccountId: Long): BalanceDomain {
         val bankAccount = bankAccountRepository.findBankAccountById(bankAccountId)
         val inputOperations = operationRepository.findAllByInputBankAccount(bankAccount)
         val outputOperations = operationRepository.findAllByOutputBankAccount(bankAccount)
-        val inputSum = calculateInputOperations(inputOperations)
-        val outputSum = calculateOutputOperations(outputOperations)
+        val inputSum = calculateInputOperations(inputOperations, bankAccount.currency)
+        val outputSum = calculateOutputOperations(outputOperations, bankAccount.currency)
         return calculateBalance(bankAccount, inputSum, outputSum)
     }
 
-    private fun calculateBalance(bankAccount: BankAccountEntity, inputSum: Double, outputSum: Double): Double {
-        return bankAccount.initialBalance + outputSum - inputSum
+    private fun calculateBalance(
+        bankAccount: BankAccountEntity,
+        inputSum: Double,
+        outputSum: Double
+    ): BalanceDomain {
+        return if (bankAccount.currency == Currency.PLN) {
+            BalanceDomain(
+                bankAccount.initialBalance + outputSum - inputSum,
+                bankAccount.currency
+            )
+        }
+        else {
+            BalanceDomain(
+                bankAccount.initialBalance - inputSum + outputSum,
+                bankAccount.currency
+            )
+        }
     }
 
-    private fun calculateInputOperations(inputOperations: List<OperationEntity>) : Double {
-        return inputOperations.map { it.inputValue }.sum()
+    private fun calculateInputOperations(inputOperations: List<OperationEntity>, currency: Currency): Double {
+        return if (currency == Currency.PLN) {
+            inputOperations.sumOf { it.outputValue }
+        } else {
+            inputOperations.sumOf { it.inputValue }
+        }
     }
 
-    private fun calculateOutputOperations(outputOperations: List<OperationEntity>) : Double {
-        return outputOperations.map { it.outputValue }.sum()
+    private fun calculateOutputOperations(outputOperations: List<OperationEntity>, currency: Currency) : Double {
+        return if (currency == Currency.PLN) {
+            outputOperations.sumOf { it.outputValue }
+        } else {
+            outputOperations.sumOf { it.inputValue }
+        }
     }
 }

@@ -27,6 +27,8 @@ GET http://localhost:8080/user-account/1/bank-account/2
 
 ### Get bank account
 GET http://localhost:8080/user-account/1/bank-account/1/balance
+### Get bank account
+GET http://localhost:8080/user-account/1/bank-account/2/balance
 
 ### Create new operation
 POST http://localhost:8080/user-account/1/operation
@@ -35,7 +37,7 @@ Content-Type: application/json
 {
   "currency": "USD",
   "action": "BUY",
-  "value": 5
+  "value": 10
 }
 
 ### Get operations list for bank account
